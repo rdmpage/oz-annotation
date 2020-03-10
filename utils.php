@@ -104,6 +104,26 @@ function find_specimen_codes(&$document)
 	}	
 }
 
+//--------------------------------------------------------------------------------------------------
+// Find GenBank acession codes in current document node
+function find_genbank_accession_numbers(&$document)
+{
+	$results = find_accession_numbers($document->current_paragraph_node->content);
+	
+	foreach ($results as $specimen)
+	{
+		$annotation = new_annotation($document, 'genbank', false);
+
+		$annotation->range = $specimen->range;
+		$annotation->pre = $specimen->pre;
+		$annotation->mid = $specimen->mid;
+		$annotation->post = $specimen->post;
+				
+		add_annotation($document, $annotation);	
+	}	
+}
+
+
 
 //--------------------------------------------------------------------------------------------------
 // Find taxon names in current document node
@@ -413,6 +433,10 @@ function dive($node, &$document )
 			// specimen codes
 			find_specimen_codes($document);
 			
+			// accessions
+			// can clash with herbarium barcodes, so need to rethink this
+			//find_genbank_accession_numbers($document);
+			
 			// identifiers
 			
 			// citations
@@ -428,7 +452,7 @@ function dive($node, &$document )
 
 //--------------------------------------------------------------------------------------------------
 
-function to_html($document, $extra = false)
+function to_html($document, $extra = false, $show_italics=true)
 {
 	$html = '';
 
@@ -472,7 +496,10 @@ function to_html($document, $extra = false)
 									{
 									
 										case 'emphasis':
-											$html .= '<i>';
+											if ($show_italics)
+											{
+												$html .= '<i>';
+											}
 											break;
 			
 										case 'strong':
@@ -505,7 +532,14 @@ function to_html($document, $extra = false)
 												$html .= '<span style="background-color:orange">';
 											}
 											break;
-										
+													
+										case 'genbank':
+											if ($extra)
+											{
+												$html .= '<span style="background-color:yellow;">';
+											}
+											break;
+																					
 										case 'linebreak':
 											$html .= '<br/>';
 											break;
@@ -535,7 +569,10 @@ function to_html($document, $extra = false)
 											break;
 									
 										case 'emphasis':
-											$html .= '</i>';
+											if ($show_italics)
+											{
+												$html .= '</i>';
+											}
 											break;
 										
 										case 'strong':
@@ -572,6 +609,13 @@ function to_html($document, $extra = false)
 												}
 											}										
 											break;										
+
+										case 'genbank':
+											if ($extra)
+											{
+												$html .= '</span>';
+											}
+											break;
 										
 										default:
 											break;

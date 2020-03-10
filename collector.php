@@ -34,10 +34,14 @@ function italics_collector_code(&$document)
 				$node->range[0],
 				null,
 				mb_detect_encoding($text)); 
+				
+			$italic_string = preg_replace('/^[^,]+,\s+/u', '', $italic_string);
+
 			
 			$pattern = $italic_string;
 		
 			$pattern = preg_replace('/[\(|\|\)|\/]/u', '\\$1', $pattern);
+			
 				
 			$COLLECTOR_NUMBER = '\s+\d+';	
 			$COLLECTION		  = '(\s+\([^\)]+\))';	
@@ -56,6 +60,13 @@ function italics_collector_code(&$document)
 			if (preg_match('/' . $pattern . '/u', $substring, $match))
 			{
 				// try and screen out spurious matches
+				
+				if (0)
+				{
+					echo '<pre>';
+					print_r($match);
+					echo '</pre>';
+				}
 				
 				$ok = false;
 			
@@ -76,7 +87,7 @@ function italics_collector_code(&$document)
 					// verbatim text we have matched
 					$hit->mid = $match[0];
 			
-					$start = $node->range[0];
+					$start = mb_strpos($text, $hit->mid, 0, mb_detect_encoding($text));
 					$end = $start + mb_strlen($hit->mid, mb_detect_encoding($hit->mid)) - 1;			
 			
 					$hit->range = array($start, $end);
@@ -89,6 +100,13 @@ function italics_collector_code(&$document)
 					$post_length = 	min(mb_strlen($text, mb_detect_encoding($text)) - $end, $flanking_length);		
 			
 					$hit->post = mb_substr($text, $end + 1, $post_length, mb_detect_encoding($text)); 
+					
+					if (0)
+					{
+						echo '<pre>';
+						print_r($hit);
+						echo '</pre>';
+					}
 			
 			
 					$annotation = new_annotation($document, 'occurrence', false);
