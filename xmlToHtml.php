@@ -56,6 +56,11 @@ foreach($pages as $page)
 						
 				$token->bold 		= $attributes['bold'] == 'yes' ? true : false;
 				$token->italic 		= $attributes['italic'] == 'yes' ? true : false;
+				
+				if (!$token->italic) {
+					$token->italic = preg_match('/\.i$/i', $attributes['font-name']);					
+				}
+				
 				$token->font_size 	= $attributes['font-size'];
 				$token->font_name	= $attributes['font-name'];			
 				$token->text 		= $text_token->firstChild->nodeValue;
