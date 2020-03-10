@@ -2,6 +2,7 @@
 
 junk
 
+*.html
 *.pdf
 *.txt
 *.xml
