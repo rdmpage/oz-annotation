@@ -148,7 +148,7 @@ function toPoint($matches)
 function find_points($text)
 {
 
-	$DEGREES_SYMBOL 		=  '[°|º]';
+	$DEGREES_SYMBOL 		=  '[˚|°|º]';
 	$MINUTES_SYMBOL			= '(\'|’|\′|\´)';
 	$SECONDS_SYMBOL			= '("|\'\'|’’|”|\′\′|\´\´|″)';
 	
