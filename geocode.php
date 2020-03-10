@@ -336,17 +336,27 @@ function find_points($text)
 	// N25°59', E98°40'
 	if (preg_match_all("/
 		(?<latitude_hemisphere>$LATITUDE_HEMISPHERE)
+		\s*
 		(?<latitude_degrees>$LATITUDE_DEGREES)
 		$DEGREES_SYMBOL
 		(?<latitude_minutes>$INTEGER)
 		$MINUTES_SYMBOL
+		(
+		(?<latitude_seconds>$FLOAT)
+		$SECONDS_SYMBOL
+		)?		
 		,
 		\s+
 		(?<longitude_hemisphere>$LONGITUDE_HEMISPHERE)
+		\s*
 		(?<longitude_degrees>$LONGITUDE_DEGREES)
 		$DEGREES_SYMBOL		
 		(?<longitude_minutes>$INTEGER)
 		$MINUTES_SYMBOL
+		(
+		(?<longitude_seconds>$FLOAT)
+		$SECONDS_SYMBOL
+		)?		
 	/xu",  $text, $matches, PREG_SET_ORDER))
 	{
 		//print_r($matches);
