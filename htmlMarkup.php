@@ -2,7 +2,7 @@
 
 // Read (simplified) HTML and add entity markup
 
-
+require_once(dirname(__FILE__) . '/collector.php');
 require_once(dirname(__FILE__) . '/utils.php');
 
 $filename = '';
@@ -48,13 +48,6 @@ foreach ($dom->documentElement->childNodes as $node) {
     dive($node, $document); 
 }
 
-// remove housekeeping
-unset($document->counter);
-unset($document->node_type_counter);
-unset($document->current_paragraph_node);
-unset($document->current_text_node);
-unset($document->current_page_node);
-unset($document->current_node);
 
 
 // external annotations
@@ -108,12 +101,29 @@ foreach ($document->nodes as $node)
 			$node->range[1] - $node->range[0],
 			mb_detect_encoding($text)); 
 			
-		echo $substring . '|<br />';
+		//echo $substring . '|<br />';
 	}
 
 }
 
+// add annotations for entities that may be flagged by italics, etc.
+italics_collector_code($document);
 
+
+// remove housekeeping
+unset($document->counter);
+unset($document->node_type_counter);
+unset($document->current_paragraph_node);
+unset($document->current_text_node);
+unset($document->current_page_node);
+unset($document->current_node);
+
+if (0)
+{
+	echo '<pre>';
+	print_r($document);
+	echo '</pre>';
+}
 
 if (0)
 {
