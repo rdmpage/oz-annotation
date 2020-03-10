@@ -134,7 +134,7 @@ if (0)
 
 if (1)
 {
-	$html = to_html($document, true);
+	$html = to_html($document, true, false);
 	echo $html;
 }
 
