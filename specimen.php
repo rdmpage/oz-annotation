@@ -1,6 +1,6 @@
 <?php
 
-// Extract possible specimen codes
+// Extract possible specimen codes, GenBank accessions, herbarium collector codes, etc.
 
 //------------------------------------------------------------------------------
 // Series of regular expressions to extract possibe specimen codes from text
@@ -31,7 +31,7 @@ function find_codes($text)
 		)
 		/x", 
 		
-		"/\[[A-Z]+\.?\d+\]/",
+		"/\[[A-Z]+[\.|-]?\d+\]/",
 		
 		"/PBI_OON \d+/",
 		
@@ -103,7 +103,7 @@ function find_codes($text)
 }
 
 
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
 // Find integers which may be specimen codes
 function find_integers($text)
 {
@@ -166,7 +166,7 @@ function find_integers($text)
 // Extract possible GenBank codes
 
 
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
 // Series of regular expressions to extract possibe accession number from text
 // Note that we don't use PREG_OFFSET_CAPTURE as it gives incorrect values
 // for some strings (depending on encoding), so we compute positions ourselves.
