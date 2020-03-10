@@ -1,0 +1,282 @@
+<html>
+<head>
+<script src="cache/telopea8natic/text/4-data.json"></script>
+
+<body>
+
+<!--
+
+ API calls we need
+ 
+ - block as annotaion, so have stanfard URL for block as annotation
+ - text string search to return hit as list of annotations (e.g., taxonomic name)
+ -- URI as query string, may return multiple hits per page
+ - on the fly text location (support search and/or visualisation of search results)
+ 
+ 
+- need to add OCR text as document, one doc per page
+- add manifest as document
+- keep track of everything using consistent URLs across manifest and OCR/PDF extraction
+
+- how we refer to canvas (image representation) versus PageID in BHL?
+- for a PDF how do we link page numbering to image/page numbering in OCR/pdfxml extraction?
+
+
+- on the fly 
+ 
+
+
+-->
+
+	<div id="data"></div>
+	<div id="output"></div>
+
+	<script>
+	
+	//document.getElementById('data').innerHTML=data.text;
+	
+	
+	//------------------------------------------------------------------------------------
+	function block_to_canvas_xywh(boundingBox, canvas_width, canvas_height) {
+
+		var box = [0,0,0,0];
+		
+		box[0] = Math.round(canvas_width * boundingBox.normalisedVertices[0].x);
+		box[1] = Math.round(canvas_height * boundingBox.normalisedVertices[0].y);
+	
+		box[2] = Math.round(canvas_width * (boundingBox.normalisedVertices[1].x - boundingBox.normalisedVertices[0].x));
+		box[3] = Math.round(canvas_height * (boundingBox.normalisedVertices[2].y - boundingBox.normalisedVertices[0].y));
+	
+		return box;
+	}
+	
+	
+	// Words with coordinates and text
+	var text_blocks = [];
+
+	// Map each character in combined text string for page to corresponding block element on page
+	var string_to_blocks = [];
+
+	// Store text for each word
+	var text_array = [];
+	
+
+	var counter = 0;
+
+	var num_pages = data.pages.length;
+	for (var page = 0; page < num_pages; page++) {
+		var num_blocks = data.pages[page].blocks.length;
+		for (var block = 0; block < num_blocks; block++) {
+			var num_paragraphs = data.pages[page].blocks[block].paragraphs.length;
+			for (var paragraph = 0; paragraph < num_paragraphs; paragraph++) {
+				var num_words = data.pages[page].blocks[block].paragraphs[paragraph].words.length;
+				for (var word = 0; word < num_words; word++) {
+					text_blocks[counter] = data.pages[page].blocks[block].paragraphs[paragraph].words[word];
+					text_array.push(data.pages[page].blocks[block].paragraphs[paragraph].words[word].text);
+					var len = data.pages[page].blocks[block].paragraphs[paragraph].words[word].text.length;
+					len++; // include trailing space between tokens
+					for (var i = 0; i < len; i++) {
+						string_to_blocks.push(counter);
+					}
+					counter++;
+				}
+			}
+		}
+	}
+
+	var text = text_array.join(' ');
+
+	document.getElementById('output').innerHTML=text;
+	
+	/*
+	for (var i in string_to_blocks) {
+		console.log(i + ' ' + string_to_blocks[i] + ' ' + text_blocks[string_to_blocks[i]].text);	
+	}
+	*/
+	
+	
+	/*
+	Given a search string, find matches in text string, map these to blocks in OCR,
+	then store as annotations and hits for IIIF.
+	
+	
+	*/
+	
+	
+	var target = 'Astereae';
+	
+	target = 'Minuria scoparia';	
+	
+	// Search pattern to match text, include before and after
+	var pattern = "(.{0,32})[\(]?(" + target + ")[,|\.|:|\)]?(.{0,32})";
+	
+	
+	var iterator = new RegExp(pattern, "gm");
+		
+	var matches = [];
+
+    while (match = iterator.exec(text)) {
+    	
+    	console.log(JSON.stringify(match));
+    	
+        var matched = {};
+        var n = match.length;
+
+        matched.pre = match[1];
+        matched.mid = match[2];
+        matched.post = match[n - 1];
+
+        matched.start = match.index + matched.pre.length;
+        matched.end = matched.start + matched.mid.length;
+        
+        console.log(JSON.stringify(matched));
+        
+        matches.push(matched);
+    
+    }
+    
+    // canvas size
+	var canvas_width = 2008;
+	var canvas_height = 2917;
+    
+    
+ 	// map matches to blocks in OCR
+ 	
+ 	var annotations = [];
+
+ 	var hits = [];
+ 	
+ 	for (var i in matches) {
+ 		var blocks = [];
+ 		
+ 		var hit = {};
+ 		
+ 		hit.annotations = [];
+ 		
+ 		var pos = -1;
+ 		
+ 		for (var j = matches[i].start; j <= matches[i].end; j++) {
+ 			
+ 			var char_to_block = string_to_blocks[j];
+ 			
+ 			if (char_to_block != pos) {
+ 			
+ 				// List for this hit
+ 				hit.annotations.push(char_to_block);
+ 				
+ 				
+ 				// Next block of code could be view in CouchDB that generates annotations for every block in OCR txt
+ 				
+ 				// represent block as annotation  							
+				var word = text_blocks[char_to_block];						
+				var box = block_to_canvas_xywh(word.boundingBox, canvas_width, canvas_height);
+				
+				var annotation = {};
+				annotation['@id'] = 'annotation id';
+				annotation['@type'] = 'oa:Annotation';
+				annotation.motivation = 'sc:painting';
+				
+				if (word.text) {
+					annotation.resource = {};
+					annotation.resource['@type'] = 'cnt:ContentAsText';
+					annotation.resource.chars = word.text;					
+				}
+				
+				annotation.on = {};
+				annotation.on['@type'] = 'oa:SpecificResource';
+				
+				annotation.on.selector = [];					
+				
+				var fragment_selector = {};				
+				fragment_selector['@type'] = 'oa:FragmentSelector';
+ 				fragment_selector.value = 'xywh=' + box.join();				
+ 				annotation.on.selector.push(fragment_selector);
+
+				var position_selector = {};				
+				position_selector['@type'] = 'oa:TextPositionSelector';
+ 				position_selector.start = j;
+ 				position_selector.end = j + word.text.length;	
+ 				annotation.on.selector.push(position_selector);
+
+				// => oa:source
+				annotation.on.full = 'URI for canvas';
+ 				
+ 				annotations.push(annotation);
+ 				
+ 				// update pos
+ 				pos = char_to_block;
+ 			}
+ 			
+ 		
+ 			//console.log(j + ' ' + string_to_blocks[j]);
+ 			
+ 			//console.log(text_blocks[string_to_blocks[j]].text);
+ 		
+ 		
+ 		}
+ 		
+ 		console.log(JSON.stringify(hit));
+ 		
+ 		
+ 		
+ 	
+ 	
+ 	}
+ 	console.log(JSON.stringify(annotations, null, 2));
+ 	
+ 	
+ 	/*
+	$n = count($results);
+	for ($i = 0; $i < $n; $i++)
+	{
+		foreach ($results[$i]->range as $charpos)
+		{
+			echo $charpos . ' ' . $string_to_blocks[$charpos] . "\n";
+			
+			$word = $text_blocks[$string_to_blocks[$charpos]];
+						
+			$box = block_to_canvas_xywh($word->boundingBox, $canvas_width, $canvas_height);
+			
+			$annotation = new stdclass;
+
+			// could be a b-node
+			//$annotation->{'@id'} = 
+			
+			$annotation->{'@type'} = 'oa:Annotation';
+			$annotation->motivation = 'sc:painting';
+			
+
+			if (isset($word->text))
+			{
+				$annotation->resource = new stdclass;
+				$annotation->resource->{'@type'} = 'cnt:ContentAsText';
+				$annotation->resource->chars = $word->text;
+			}
+			
+			$annotation->on = new stdclass;
+			$annotation->on->{'@type'} = 'oa:SpecificResource';
+			$annotation->on->selector = new stdclass; // eventually an array
+			$annotation->on->selector->{'@type'} = 'oa:FragmentSelector';
+			$annotation->on->selector->value = 'xywh=' . join(',', $box);
+			
+			$annotation->on->full = 'https://www.biodiversitylibrary.org/page/57913211';
+
+			print_r($annotation);
+			
+echo "\n";
+echo json_encode($annotation, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+echo "\n";
+			
+
+			
+		}
+	
+	} 
+	*/	
+	
+
+	
+	</script>
+
+</body>
+</html>
