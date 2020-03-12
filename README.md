@@ -59,3 +59,22 @@ M.F. Gardner & S.G. Knees 6609 (E [E00131860])
 ### Dividing and conquering the fastest-growing genus: Towards a natural sectional classification of the mega-diverse genus Begonia (Begoniaceae)
 
 Many sequences and specimens, POPSET https://www.ncbi.nlm.nih.gov/popset?LinkName=nuccore_popset&from_uid=1388809152
+
+### Revision of Muhlenbergia (Poaceae, Chloridoideae, Cynodonteae, Muhlenbergiinae) in Peru: classification, phylogeny, and a new species, M. romaschenkoi
+
+10.3897/phytokeys.114.28799
+
+Treatment (one of many)
+[plazi](http://tb.plazi.org/GgServer/html/EFFB8DA8E7EFA589053DDD6506FF24F1)
+
+Specimen US-3730646 is [gbif:1320146812](https://www.gbif.org/occurrence/1320146812) = http://n2t.net/ark:/65665/382386b03-ba48-4e63-97d2-c43d0c6cd4aa GBIF has older id (doesn’t recognise it as a type of a new species)
+
+### Names and types relating to the South American genus Lamanonia (Cunoniaceae) and its synonyms, the identity of L. speciosa, and an account of the little-known L. ulei
+
+10.1007/S12225-017-9731-4 
+
+ORCID for author, lots of specimen codes(barcodes), Kew Bulletin, open access, license and ORCID in CrossRef metadata.
+
+
+
+
