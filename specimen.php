@@ -14,6 +14,8 @@ function find_codes($text)
 	$CATALOGUE_NUMBER_SUFFIX_DELIMITER	= '(\-|–|­|—|\.)';
 	$CATALOGUE_NUMBER_SUFFIX			= '[0-9]{1,}((\.\d+)+)?';
 	
+	$BARCODE							= '[A-Z]+[\.|-]?\d+';
+	
 	$flanking_length = 50;
 	
 	$results = array();	
@@ -31,7 +33,7 @@ function find_codes($text)
 		)
 		/x", 
 		
-		"/\[[A-Z]+[\.|-]?\d+\]/",
+		"/\[$BARCODE(,\s+$BARCODE)*\]/",
 		
 		"/PBI_OON \d+/",
 		
