@@ -43,7 +43,7 @@ function italics_collector_code(&$document)
 			$pattern = preg_replace('/[\(|\|\)|\/]/u', '\\$1', $pattern);
 			
 				
-			$COLLECTOR_NUMBER = '\s+\d+';	
+			$COLLECTOR_NUMBER = '(\s+[A-Z]+)?\s+\d+';	
 			$COLLECTION		  = '(\s+\([^\)]+\))';	
 		
 			if (preg_match('/' . $COLLECTOR_NUMBER . '$/u', $pattern))
