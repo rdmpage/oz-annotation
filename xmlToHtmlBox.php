@@ -132,6 +132,21 @@ foreach($pages as $page)
 		
 				$token = new stdclass;
 				$token->type = 'token';
+				
+				$token->rotation 	= $attributes['rotation'] == '1' ? true : false;
+				$token->angle 		= $attributes['angle'];
+				
+				$span_style = '';
+				
+				if ($token->rotation)
+				{
+					if ($token->angle == 90)
+					{
+						$span_style = 'writing-mode: vertical-rl;transform: rotate(-180deg);';
+					}
+				
+				}
+				
 						
 				$token->bold 		= $attributes['bold'] == 'yes' ? true : false;
 				$token->italic 		= $attributes['italic'] == 'yes' ? true : false;
@@ -153,17 +168,36 @@ foreach($pages as $page)
 				$x = $attributes['x'];
 				$y = $attributes['y'];
 				$w = $attributes['width'];
-				$h = $attributes['height'];				
+				$h = $attributes['height'];		
+				
+				/*
+				<TOKEN sid="p8_s105233" id="p8_w125" font-name="phjhgxadvttf0d81159" symbolic="yes" fixed-width="yes" bold="no" italic="no" font-size="8.4682" font-color="#131313" rotation="1" angle="90" x="104.366" y="554.296" base="110.717" width="8.18028" height="23.3807">1240”</TOKEN>
+				
+				
+				*/		
 				
 				echo '<div style="position:absolute;' 
 					. 'left:' . $x . 'px;'
 					. 'top:' . $y . 'px;'
 					. 'width:' . $w . 'px;'
 					. 'height:' . $h . 'px;'
-					. 'background-color:rgb(192,192,192);">';
+					
+					//. 'background-color:rgb(228,228,228);'					
+					
+					. '">';
 			
-		
-				//echo $token->text . "\n";
+				echo '<span style="font-size:' . $token->font_size . 'px;'
+					. 'rgba(19,19,19,1);'
+					. 'vertical-align:baseline;'
+					. 'white-space:nowrap;'
+
+					. $span_style
+
+					. '">';
+	
+				echo $token->text;
+				
+				echo '</span>';
 				
 				echo '</div>';
 		
