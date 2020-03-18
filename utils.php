@@ -7,12 +7,14 @@ mb_internal_encoding("UTF-8");
 require_once(dirname(__FILE__) . '/geocode.php');
 require_once(dirname(__FILE__) . '/specimen.php');
 
+define ('WHITESPACE_CHARS', ' \f\n\r\t\x{00a0}\x{0020}\x{1680}\x{180e}\x{2028}\x{2029}\x{2000}\x{2001}\x{2002}\x{2003}\x{2004}\x{2005}\x{2006}\x{2007}\x{2008}\x{2009}\x{200a}\x{202f}\x{205f}\x{3000}');
+
+
 //--------------------------------------------------------------------------------------------------
 // Clean up text so that we have single spaces between text, 
 // see https://github.com/readmill/API/wiki/Highlight-locators
 function clean_text($text)
 {
-	define ('WHITESPACE_CHARS', ' \f\n\r\t\x{00a0}\x{0020}\x{1680}\x{180e}\x{2028}\x{2029}\x{2000}\x{2001}\x{2002}\x{2003}\x{2004}\x{2005}\x{2006}\x{2007}\x{2008}\x{2009}\x{200a}\x{202f}\x{205f}\x{3000}');
 	
 	$text = preg_replace('/[' . WHITESPACE_CHARS . ']+/u', ' ', $text);
 	
