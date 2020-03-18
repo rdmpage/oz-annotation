@@ -40,7 +40,7 @@ function italics_collector_code(&$document)
 			
 			$pattern = $italic_string;
 		
-			$pattern = preg_replace('/[\(|\|\)|\/]/u', '\\$1', $pattern);
+			$pattern = preg_replace('/[\(|\|\)|\/|\$|\*]/u', '\\$1', $pattern);
 			
 				
 			$COLLECTOR_NUMBER = '(\s+[A-Z]+)?\s+\d+';	
@@ -54,10 +54,15 @@ function italics_collector_code(&$document)
 			{
 				$pattern .= $COLLECTOR_NUMBER . $COLLECTION	. '?';
 			}
-		
-			//echo '<b>' . $pattern . '|</b><br />';
 			
-			if (preg_match('/' . $pattern . '/u', $substring, $match))
+			$r =preg_match('/' . $pattern . '/u', $substring, $match);
+			
+			if ($r === false)
+			{
+				echo "Error in regexp $pattern\n";
+				exit();
+			}
+			else if ($r)
 			{
 				// try and screen out spurious matches
 				
