@@ -182,8 +182,8 @@ foreach($pages as $page)
 					. 'width:' . $w . 'px;'
 					. 'height:' . $h . 'px;'
 					
-					//. 'background-color:rgb(228,228,228);'					
-					
+					//. 'background-color:rgb(228,228,228);'
+										
 					. '">';
 			
 				echo '<span style="font-size:' . $token->font_size . 'px;'

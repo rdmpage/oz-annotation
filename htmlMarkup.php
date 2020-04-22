@@ -90,6 +90,7 @@ if (0)
 
 // list everything in italics
 
+echo '<i>Italics</i><br/>';
 foreach ($document->nodes as $node)
 {
 	if ($node->type == 'emphasis')
@@ -101,7 +102,7 @@ foreach ($document->nodes as $node)
 			$node->range[1] - $node->range[0],
 			mb_detect_encoding($text)); 
 			
-		//echo $substring . '|<br />';
+		echo $substring . '|<br />';
 	}
 
 }
@@ -137,5 +138,46 @@ if (1)
 	$html = to_html($document, true, false);
 	echo $html;
 }
+
+if (1)
+{
+	// Dump list of annotations
+	echo '<h1>Annotations</h1>';
+	
+	echo '<h2>Occurences</h2>';
+	echo '<ul>';
+	foreach ($document->nodes as $node)
+	{
+		// specimen
+		if ($node->type == 'occurrence')
+		{
+			echo '<li>' . $node->mid . '</li>';
+		
+		}
+	}
+	echo '</ul>';
+	
+	echo '<h2>Points</h2>';
+	echo '<ul>';	
+	foreach ($document->nodes as $node)
+	{
+
+		// point location
+		if ($node->type == 'point')
+		{
+			echo '<li>' . $node->mid . '</li>';
+		
+		}
+
+	}
+		
+	echo '</ul>';
+	
+
+
+
+}
+
+
 
 ?>
